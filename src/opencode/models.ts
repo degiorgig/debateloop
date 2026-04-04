@@ -46,6 +46,11 @@ export function listAvailableModelsFromProviders(response: ConfigProvidersRespon
 
 export async function listAvailableModels(client: OpencodeClient) {
   const response = await client.config.providers()
+
+  if (!response.data) {
+    throw new DebateModelError("OpenCode returned no provider configuration. Check your local OpenCode setup and try again.")
+  }
+
   return listAvailableModelsFromProviders(response.data)
 }
 
