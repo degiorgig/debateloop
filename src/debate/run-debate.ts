@@ -1,4 +1,7 @@
 import type { DebateRoleConfig } from "../app/config.js"
+import type { OpencodeClient, Part } from "@opencode-ai/sdk"
+import { buildCritiquePrompt, buildInitialAnswerPrompt, getSharedDebateFraming } from "./prompts.js"
+import { toSdkModelRef } from "../opencode/models.js"
 import type { DebateStageDefinition } from "./stages.js"
 import { DEBATE_STAGES } from "./stages.js"
 import type { DebateRunState, DebateStageState } from "./state.js"
@@ -12,6 +15,21 @@ export interface DebateProgressEvent {
 export interface DebateCompletion {
   state: DebateRunState
   transcriptAvailable: boolean
+}
+
+export interface DebateSessionClient {
+  create: OpencodeClient["session"]["create"]
+  prompt: OpencodeClient["session"]["prompt"]
+}
+
+type DebaterRole = "debaterA" | "debaterB"
+
+function extractText(parts: Part[]) {
+  return parts
+    .filter((part): part is Extract<Part, { type: "text" }> => part.type === "text")
+    .map((part) => part.text)
+    .join("\n")
+    .trim()
 }
 
 function createStageState(): DebateStageState[] {
@@ -36,9 +54,124 @@ function updateStageStatus(state: DebateRunState, stageKey: DebateStageDefinitio
   }
 }
 
+function updateStageResult(state: DebateRunState, stageKey: DebateStageDefinition["key"], result: DebateStageState["result"]) {
+  const target = state.stages.find((stage) => stage.key === stageKey)
+
+  if (target) {
+    target.result = result
+  }
+}
+
+function getStageResult(state: DebateRunState, stageKey: DebateStageDefinition["key"]) {
+  return state.stages.find((stage) => stage.key === stageKey)?.result
+}
+
+function isDebaterRole(role: DebateStageDefinition["actorRole"]): role is DebaterRole {
+  return role === "debaterA" || role === "debaterB"
+}
+
+async function runModelStage(options: {
+  sessionClient: DebateSessionClient
+  stageKey: DebateStageDefinition["key"]
+  title: string
+  modelId: string
+  prompt: string
+}) {
+  const created = await options.sessionClient.create({
+    body: { title: options.title },
+  })
+  const sessionId = created.data?.id
+
+  if (!sessionId) {
+    throw new Error(`OpenCode did not return a session id for ${options.stageKey}.`)
+  }
+
+  const response = await options.sessionClient.prompt({
+    path: { id: sessionId },
+    body: {
+      model: toSdkModelRef(options.modelId),
+      system: getSharedDebateFraming(),
+      parts: [{ type: "text", text: options.prompt }],
+    },
+  })
+
+  if (!response.data) {
+    throw new Error(`OpenCode did not return a response payload for ${options.stageKey}.`)
+  }
+
+  return {
+    stageKey: options.stageKey,
+    sessionId,
+    content: extractText(response.data.parts),
+  }
+}
+
+async function maybeRunStage(options: {
+  sessionClient?: DebateSessionClient
+  state: DebateRunState
+  stage: DebateStageDefinition
+}) {
+  if (!options.sessionClient) {
+    return
+  }
+
+  const actorModel = options.state.roles[options.stage.actorRole]
+
+  if (options.stage.key === "answer_a" || options.stage.key === "answer_b") {
+    if (!isDebaterRole(options.stage.actorRole)) {
+      throw new Error(`Unexpected actor role for ${options.stage.key}.`)
+    }
+
+    const result = await runModelStage({
+      sessionClient: options.sessionClient,
+      stageKey: options.stage.key,
+      title: `Debate ${options.stage.key}`,
+      modelId: actorModel,
+      prompt: buildInitialAnswerPrompt({
+        question: options.state.question,
+        actorRole: options.stage.actorRole,
+      }),
+    })
+
+    updateStageResult(options.state, options.stage.key, result)
+    return
+  }
+
+  if (options.stage.key === "critique_a" || options.stage.key === "critique_b") {
+    if (!isDebaterRole(options.stage.actorRole)) {
+      throw new Error(`Unexpected actor role for ${options.stage.key}.`)
+    }
+
+    const actorAnswerKey = options.stage.key === "critique_a" ? "answer_a" : "answer_b"
+    const opponentAnswerKey = options.stage.key === "critique_a" ? "answer_b" : "answer_a"
+    const actorAnswer = getStageResult(options.state, actorAnswerKey)?.content
+    const opponentAnswer = getStageResult(options.state, opponentAnswerKey)?.content
+
+    if (!actorAnswer || !opponentAnswer) {
+      throw new Error(`Cannot run ${options.stage.key} before both opening answers exist.`)
+    }
+
+    const result = await runModelStage({
+      sessionClient: options.sessionClient,
+      stageKey: options.stage.key,
+      title: `Debate ${options.stage.key}`,
+      modelId: actorModel,
+      prompt: buildCritiquePrompt({
+        question: options.state.question,
+        actorRole: options.stage.actorRole,
+        actorAnswer,
+        opponentAnswer,
+      }),
+    })
+
+    updateStageResult(options.state, options.stage.key, result)
+  }
+}
+
 export async function runDebate(options: {
   question: string
   roles: DebateRoleConfig
+  sessionClient?: DebateSessionClient
   onStageStart?: (event: DebateProgressEvent) => Promise<void> | void
 }) {
   const state: DebateRunState = {
@@ -57,6 +190,12 @@ export async function runDebate(options: {
       stage,
       actorModel: options.roles[stage.actorRole],
       state: cloneState(state),
+    })
+
+    await maybeRunStage({
+      sessionClient: options.sessionClient,
+      state,
+      stage,
     })
 
     updateStageStatus(state, stage.key, "completed")

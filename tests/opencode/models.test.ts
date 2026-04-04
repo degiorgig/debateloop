@@ -74,8 +74,8 @@ describe("OpenCode model helpers", () => {
 
   it("converts provider/model ids into SDK references", () => {
     expect(toSdkModelRef("openai/gpt-5")).toEqual({
-      providerId: "openai",
-      modelId: "gpt-5",
+      providerID: "openai",
+      modelID: "gpt-5",
     })
   })
 })

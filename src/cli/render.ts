@@ -20,6 +20,10 @@ export function renderStagePlan() {
   ].join("\n")
 }
 
+export function renderIndependenceNote() {
+  return "Independence: Debater A and Debater B generate their opening answers separately before either sees the other's answer."
+}
+
 export function renderStageProgress(stage: DebateStageDefinition, actorModel: string) {
   return `Running ${stage.label} with ${actorModel}`
 }

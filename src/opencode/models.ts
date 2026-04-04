@@ -67,5 +67,10 @@ export function assertModelAvailable(models: AvailableModel[], roleLabel: string
 }
 
 export function toSdkModelRef(id: string) {
-  return splitModelId(id)
+  const result = splitModelId(id)
+
+  return {
+    providerID: result.providerId,
+    modelID: result.modelId,
+  }
 }

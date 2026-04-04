@@ -1,7 +1,7 @@
 import type { DebateConfig } from "../app/config.js"
 import { saveDebateConfig } from "../app/config.js"
 import { runDebate } from "../debate/run-debate.js"
-import { renderCompletion, renderRoleSummary, renderStagePlan, renderStageProgress } from "./render.js"
+import { renderCompletion, renderIndependenceNote, renderRoleSummary, renderStagePlan, renderStageProgress } from "./render.js"
 import { resolveRunConfig, type RunConfigOverrides } from "./resolve-run-config.js"
 import { startOpenCode, type StartedOpenCode } from "../opencode/client.js"
 
@@ -32,10 +32,12 @@ export async function runAskCommand(
 
     log(renderRoleSummary(resolved.activeRoles))
     log(renderStagePlan())
+    log(renderIndependenceNote())
 
     const completion = await runDebate({
       question,
       roles: resolved.activeRoles,
+      sessionClient: openCode.client.session,
       onStageStart: ({ stage, actorModel }) => {
         log(renderStageProgress(stage, actorModel))
       },
