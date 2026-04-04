@@ -13,8 +13,8 @@
 
 ### Debate Orchestration
 
-- [ ] **ORCH-01**: Debater A can generate an initial answer to the user question
-- [ ] **ORCH-02**: Debater B can generate an independent initial answer to the same question before seeing Debater A's answer
+- [x] **ORCH-01**: Debater A can generate an initial answer to the user question
+- [x] **ORCH-02**: Debater B can generate an independent initial answer to the same question before seeing Debater A's answer
 - [ ] **ORCH-03**: Debater A can critique Debater B's initial answer
 - [ ] **ORCH-04**: Debater B can critique Debater A's initial answer
 - [ ] **ORCH-05**: Debater A can generate a final revised answer after the critique round
@@ -75,8 +75,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INPUT-01 | Phase 1 | Complete |
 | INPUT-02 | Phase 1 | Complete |
 | INPUT-03 | Phase 1 | Complete |
-| ORCH-01 | Phase 2 | Pending |
-| ORCH-02 | Phase 2 | Pending |
+| ORCH-01 | Phase 2 | Complete |
+| ORCH-02 | Phase 2 | Complete |
 | ORCH-03 | Phase 2 | Pending |
 | ORCH-04 | Phase 2 | Pending |
 | ORCH-05 | Phase 4 | Pending |
