@@ -58,5 +58,5 @@ None.
 ## Session Continuity
 
 Last session: 2026-04-04
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation-and-debate-skeleton/01-VERIFICATION.md
+Stopped at: Phase 2 context gathered
+Resume file: .planning/phases/02-independent-answers-and-critiques/02-CONTEXT.md
