@@ -21,7 +21,7 @@ export function renderStagePlan() {
 }
 
 export function renderIndependenceNote() {
-  return "Independence: Debater A and Debater B generate their opening answers separately before either sees the other's answer."
+  return "Independent opening answers: Debater A and Debater B each answer in isolation before the cross-critique exchange begins."
 }
 
 export function renderStageProgress(stage: DebateStageDefinition, actorModel: string) {

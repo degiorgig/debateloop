@@ -175,7 +175,7 @@ describe("runAskCommand", () => {
     )
     expect(lines).toContain("Debate stages:\n  1. Answer A\n  2. Answer B\n  3. Critique A\n  4. Critique B\n  5. Revise A\n  6. Revise B\n  7. Final decision")
     expect(lines).toContain(
-      "Independence: Debater A and Debater B generate their opening answers separately before either sees the other's answer.",
+      "Independent opening answers: Debater A and Debater B each answer in isolation before the cross-critique exchange begins.",
     )
     expect(lines.filter((line) => line.startsWith("Running "))).toEqual([
       "Running Answer A with openai/gpt-5",
@@ -269,6 +269,8 @@ describe("runAskCommand", () => {
     expect(answerBPrompt).toContain("Question: Should tests come first?")
     expect(answerBPrompt).not.toContain("Opponent opening answer")
     expect(answerBPrompt).not.toContain("Your opening answer")
+    expect(answerAPrompt).not.toContain("Opponent opening answer")
+    expect(answerAPrompt).not.toContain("Your opening answer")
 
     const answerAResult = completion.state.stages.find((stage) => stage.key === "answer_a")?.result?.content
     const answerBResult = completion.state.stages.find((stage) => stage.key === "answer_b")?.result?.content
@@ -279,8 +281,10 @@ describe("runAskCommand", () => {
     expect(critiqueAPrompt).toContain("You are Debater A and you are critiquing Debater B.")
     expect(critiqueAPrompt).toContain(`Your opening answer:\n${answerAResult}`)
     expect(critiqueAPrompt).toContain(`Opponent opening answer:\n${answerBResult}`)
+    expect(critiqueAPrompt).toContain("Critique the opposing debater's opening answer against your own answer instead of writing a generic follow-up or a revised final answer.")
     expect(critiqueBPrompt).toContain("You are Debater B and you are critiquing Debater A.")
     expect(critiqueBPrompt).toContain(`Your opening answer:\n${answerBResult}`)
     expect(critiqueBPrompt).toContain(`Opponent opening answer:\n${answerAResult}`)
+    expect(critiqueBPrompt).toContain("Critique the opposing debater's opening answer against your own answer instead of writing a generic follow-up or a revised final answer.")
   })
 })

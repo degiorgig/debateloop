@@ -66,6 +66,16 @@ function getStageResult(state: DebateRunState, stageKey: DebateStageDefinition["
   return state.stages.find((stage) => stage.key === stageKey)?.result
 }
 
+function getRequiredStageContent(state: DebateRunState, stageKey: DebateStageDefinition["key"]) {
+  const content = getStageResult(state, stageKey)?.content?.trim()
+
+  if (!content) {
+    throw new Error(`Cannot run dependent stage before ${stageKey} has completed content.`)
+  }
+
+  return content
+}
+
 function isDebaterRole(role: DebateStageDefinition["actorRole"]): role is DebaterRole {
   return role === "debaterA" || role === "debaterB"
 }
@@ -144,12 +154,8 @@ async function maybeRunStage(options: {
 
     const actorAnswerKey = options.stage.key === "critique_a" ? "answer_a" : "answer_b"
     const opponentAnswerKey = options.stage.key === "critique_a" ? "answer_b" : "answer_a"
-    const actorAnswer = getStageResult(options.state, actorAnswerKey)?.content
-    const opponentAnswer = getStageResult(options.state, opponentAnswerKey)?.content
-
-    if (!actorAnswer || !opponentAnswer) {
-      throw new Error(`Cannot run ${options.stage.key} before both opening answers exist.`)
-    }
+    const actorAnswer = getRequiredStageContent(options.state, actorAnswerKey)
+    const opponentAnswer = getRequiredStageContent(options.state, opponentAnswerKey)
 
     const result = await runModelStage({
       sessionClient: options.sessionClient,
@@ -165,7 +171,10 @@ async function maybeRunStage(options: {
     })
 
     updateStageResult(options.state, options.stage.key, result)
+    return
   }
+
+  // Revise and judge stages stay as placeholders until later phases.
 }
 
 export async function runDebate(options: {
