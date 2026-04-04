@@ -5,21 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-04-04)
 
 **Core value:** For every user question, the system should produce a stronger final answer by forcing models to reason independently, critique each other, and pass through a final judge.
-**Current focus:** Phase 3: Transcript Persistence And Inspection
+**Current focus:** Phase 4: Final Revisions And Judge Selection
 
 ## Current Position
 
-Phase: 3 of 5 (Transcript Persistence And Inspection)
+Phase: 4 of 5 (Final Revisions And Judge Selection)
 Plan: 0 of 3 in current phase
 Status: Ready to start
-Last activity: 2026-04-04 — Completed 02-03 execution
+Last activity: 2026-04-05 — Completed 03 verification and execution
 
-Progress: [████░░░░░░] 40%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
+- Total plans completed: 9
 - Average duration: 3 min
 - Total execution time: 0.3 hours
 
@@ -29,13 +29,14 @@ Progress: [████░░░░░░] 40%
 |-------|-------|-------|----------|
 | 1 | 3 | 15 min | 5 min |
 | 2 | 3 | 5 min | 2 min |
+| 3 | 3 | 14 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-02, 01-03, 02-01, 02-02, 02-03
+- Last 5 plans: 02-02, 02-03, 03-01, 03-02, 03-03
 - Trend: Stable
 
 **Latest metric:**
-- Phase 02 P03 — 1 min, 2 tasks, 2 files
+- Phase 03 P03 — 5 min, 1 task, 7 files
 
 ## Accumulated Context
 
@@ -55,6 +56,9 @@ Recent decisions affecting current work:
 - [Phase 02]: Revise and judge stages remain placeholders while critique stages become the first shared-context boundary in the debate loop.
 - [Phase 02]: Capture mocked OpenCode session payloads directly so independence regressions fail on prompt inputs, not just downstream outputs.
 - [Phase 02]: Reuse the CLI entrypoint test path to verify the visible independence note and completed stage state without expanding production surface area.
+- [Phase 03]: Persist one structured transcript JSON record per debate run under the app config directory instead of adding a database in v1.
+- [Phase 03]: Save transcript updates directly from the stage loop so partial failures keep useful on-disk debugging context.
+- [Phase 03]: Expose transcript inspection as `debate inspect <run-id>` derived from the saved record, with placeholders for later fixed stages.
 
 ### Pending Todos
 
@@ -66,6 +70,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-04-04
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-transcript-persistence-and-inspection/03-CONTEXT.md
+Last session: 2026-04-05
+Stopped at: Phase 4 context gathered
+Resume file: .planning/phases/04-final-revisions-and-judge-selection/04-CONTEXT.md
