@@ -275,8 +275,11 @@ describe("runAskCommand", () => {
 
     expect(answerAResult).toBeTruthy()
     expect(answerBResult).toBeTruthy()
+    expect(critiqueAPrompt).toContain("You are now in the critique round.")
+    expect(critiqueAPrompt).toContain("You are Debater A and you are critiquing Debater B.")
     expect(critiqueAPrompt).toContain(`Your opening answer:\n${answerAResult}`)
     expect(critiqueAPrompt).toContain(`Opponent opening answer:\n${answerBResult}`)
+    expect(critiqueBPrompt).toContain("You are Debater B and you are critiquing Debater A.")
     expect(critiqueBPrompt).toContain(`Your opening answer:\n${answerBResult}`)
     expect(critiqueBPrompt).toContain(`Opponent opening answer:\n${answerAResult}`)
   })
