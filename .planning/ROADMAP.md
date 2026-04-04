@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation And Debate Skeleton** - Set up the project, SDK integration, config, and fixed stage model
 - [x] **Phase 2: Independent Answers And Critiques** - Implement the core symmetric debate flow before judging
-- [ ] **Phase 3: Transcript Persistence And Inspection** - Save each stage and make debates inspectable
+- [x] **Phase 3: Transcript Persistence And Inspection** - Save each stage and make debates inspectable (completed 2026-04-04)
 - [ ] **Phase 4: Final Revisions And Judge Selection** - Complete the workflow with revised answers and winner selection
 - [ ] **Phase 5: Reliability And v1 Polish** - Add retries, failure handling, tests, and output polish
 
@@ -62,9 +62,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01: Design and implement the debate record and transcript storage format
-- [ ] 03-02: Persist stage artifacts as the debate progresses
-- [ ] 03-03: Add transcript inspection output for completed debates
+- [x] 03-01: Design and implement the debate record and transcript storage format
+- [x] 03-02: Persist stage artifacts as the debate progresses
+- [x] 03-03: Add transcript inspection output for completed debates
 
 ### Phase 4: Final Revisions And Judge Selection
 **Goal**: Complete the debate loop by producing revised answers from both debaters and choosing a winner through a validated judge response
@@ -78,9 +78,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01: Implement final revision stages for Debater A and Debater B
-- [ ] 04-02: Add structured judge prompt, schema validation, and winner extraction
-- [ ] 04-03: Render the final verdict and winning answer from the validated judge result
+- [ ] 04-01-PLAN.md — Implement final revision stages for Debater A and Debater B
+- [ ] 04-02-PLAN.md — Add structured judge prompt, schema validation, and winner extraction
+- [ ] 04-03-PLAN.md — Render the final verdict and winning answer from the validated judge result
 
 ### Phase 5: Reliability And v1 Polish
 **Goal**: Make the debate engine resilient and practical with retries, stage-aware errors, and end-to-end test confidence
@@ -107,6 +107,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Foundation And Debate Skeleton | 3/3 | Complete | 2026-04-04 |
 | 2. Independent Answers And Critiques | 3/3 | Complete | 2026-04-04 |
-| 3. Transcript Persistence And Inspection | 0/3 | Not started | - |
+| 3. Transcript Persistence And Inspection | 3/3 | Complete | 2026-04-05 |
 | 4. Final Revisions And Judge Selection | 0/3 | Not started | - |
 | 5. Reliability And v1 Polish | 0/3 | Not started | - |
