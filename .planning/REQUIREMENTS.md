@@ -15,8 +15,8 @@
 
 - [x] **ORCH-01**: Debater A can generate an initial answer to the user question
 - [x] **ORCH-02**: Debater B can generate an independent initial answer to the same question before seeing Debater A's answer
-- [ ] **ORCH-03**: Debater A can critique Debater B's initial answer
-- [ ] **ORCH-04**: Debater B can critique Debater A's initial answer
+- [x] **ORCH-03**: Debater A can critique Debater B's initial answer
+- [x] **ORCH-04**: Debater B can critique Debater A's initial answer
 - [ ] **ORCH-05**: Debater A can generate a final revised answer after the critique round
 - [ ] **ORCH-06**: Debater B can generate a final revised answer after the critique round
 - [x] **ORCH-07**: The debate executes in a fixed stage order that preserves the symmetric workflow
@@ -77,8 +77,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INPUT-03 | Phase 1 | Complete |
 | ORCH-01 | Phase 2 | Complete |
 | ORCH-02 | Phase 2 | Complete |
-| ORCH-03 | Phase 2 | Pending |
-| ORCH-04 | Phase 2 | Pending |
+| ORCH-03 | Phase 2 | Complete |
+| ORCH-04 | Phase 2 | Complete |
 | ORCH-05 | Phase 4 | Pending |
 | ORCH-06 | Phase 4 | Pending |
 | ORCH-07 | Phase 1 | Complete |

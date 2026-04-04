@@ -47,8 +47,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: Implement initial answer stages for Debater A and Debater B
-- [ ] 02-02: Implement cross-critique stage prompts and output handling
+- [x] 02-01: Implement initial answer stages for Debater A and Debater B
+- [x] 02-02: Implement cross-critique stage prompts and output handling
 - [ ] 02-03: Add tests around stage order and independence boundaries
 
 ### Phase 3: Transcript Persistence And Inspection
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation And Debate Skeleton | 3/3 | Complete | 2026-04-04 |
-| 2. Independent Answers And Critiques | 1/3 | In Progress|  |
+| 2. Independent Answers And Critiques | 2/3 | In Progress |  |
 | 3. Transcript Persistence And Inspection | 0/3 | Not started | - |
 | 4. Final Revisions And Judge Selection | 0/3 | Not started | - |
 | 5. Reliability And v1 Polish | 0/3 | Not started | - |
