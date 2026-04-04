@@ -4,6 +4,12 @@ import { runDebate } from "../../src/debate/run-debate.js"
 import { runAskCommand } from "../../src/cli/run-ask-command.js"
 import * as resolveRunConfigModule from "../../src/cli/resolve-run-config.js"
 
+const SHARED_DEBATE_FRAMING = [
+  "You are participating in a structured two-model debate.",
+  "Write a clear, useful response that takes a position without pretending it is the final verdict.",
+  "Stay grounded, balanced, and moderately opinionated.",
+].join("\n")
+
 function createMockClient() {
   return {
     config: {
@@ -89,13 +95,20 @@ function createMockClient() {
 
 function createMockSessionClient() {
   let sessionCount = 0
+  const responses = [
+    "Opening answer from Debater A",
+    "Opening answer from Debater B",
+    "Critique from Debater A",
+    "Critique from Debater B",
+  ]
 
   return {
     create: vi.fn().mockImplementation(async () => ({
       data: { id: `session-${++sessionCount}` },
     })),
     prompt: vi.fn().mockImplementation(async (options) => {
-      const text = options.body?.parts?.[0]?.type === "text" ? options.body.parts[0].text : ""
+      const responseText = responses.shift() ?? `mock response ${sessionCount}`
+
       return {
         data: {
           info: {
@@ -117,7 +130,7 @@ function createMockSessionClient() {
               sessionID: options.path.id,
               messageID: `message-${sessionCount}`,
               type: "text",
-              text: `mock response for ${text}`,
+              text: responseText,
             },
           ],
         },
@@ -252,14 +265,30 @@ describe("runAskCommand", () => {
       sessionClient,
     })
 
-    expect(completion.state.stages.find((stage) => stage.key === "answer_a")?.result?.content).toContain(
-      "Question: Should tests come first?",
-    )
-    expect(completion.state.stages.find((stage) => stage.key === "answer_b")?.result?.content).toContain(
-      "Question: Should tests come first?",
-    )
+    expect(sessionClient.create).toHaveBeenCalledTimes(4)
+    expect(sessionClient.prompt).toHaveBeenCalledTimes(4)
+    expect(sessionClient.create.mock.calls).toEqual([
+      [{ body: { title: "Debate answer_a" } }],
+      [{ body: { title: "Debate answer_b" } }],
+      [{ body: { title: "Debate critique_a" } }],
+      [{ body: { title: "Debate critique_b" } }],
+    ])
 
     const promptCalls = sessionClient.prompt.mock.calls.map(([call]) => call)
+    const answerACall = promptCalls[0]
+    const answerBCall = promptCalls[1]
+    const critiqueACall = promptCalls[2]
+    const critiqueBCall = promptCalls[3]
+
+    expect(answerACall.path).toEqual({ id: "session-1" })
+    expect(answerBCall.path).toEqual({ id: "session-2" })
+    expect(critiqueACall.path).toEqual({ id: "session-3" })
+    expect(critiqueBCall.path).toEqual({ id: "session-4" })
+    expect(answerACall.body.system).toBe(SHARED_DEBATE_FRAMING)
+    expect(answerBCall.body.system).toBe(SHARED_DEBATE_FRAMING)
+    expect(critiqueACall.body.system).toBe(SHARED_DEBATE_FRAMING)
+    expect(critiqueBCall.body.system).toBe(SHARED_DEBATE_FRAMING)
+
     const answerAPrompt = promptCalls[0].body.parts[0].text as string
     const answerBPrompt = promptCalls[1].body.parts[0].text as string
     const critiqueAPrompt = promptCalls[2].body.parts[0].text as string
@@ -267,16 +296,76 @@ describe("runAskCommand", () => {
 
     expect(answerAPrompt).toContain("Question: Should tests come first?")
     expect(answerBPrompt).toContain("Question: Should tests come first?")
+    expect(answerAPrompt).toContain("Debater A: lead with a direct recommendation")
+    expect(answerBPrompt).toContain("Debater B: stress-test assumptions")
+    expect(answerAPrompt).toContain("Write an initial answer to the user's question.")
+    expect(answerBPrompt).toContain("Write an initial answer to the user's question.")
     expect(answerBPrompt).not.toContain("Opponent opening answer")
     expect(answerBPrompt).not.toContain("Your opening answer")
+    expect(answerBPrompt).not.toContain("Opening answer from Debater A")
     expect(answerAPrompt).not.toContain("Opponent opening answer")
     expect(answerAPrompt).not.toContain("Your opening answer")
+    expect(answerAPrompt).not.toContain("Opening answer from Debater B")
 
     const answerAResult = completion.state.stages.find((stage) => stage.key === "answer_a")?.result?.content
     const answerBResult = completion.state.stages.find((stage) => stage.key === "answer_b")?.result?.content
+    const critiqueAStage = completion.state.stages.find((stage) => stage.key === "critique_a")
+    const critiqueBStage = completion.state.stages.find((stage) => stage.key === "critique_b")
 
-    expect(answerAResult).toBeTruthy()
-    expect(answerBResult).toBeTruthy()
+    expect(answerAResult).toBe("Opening answer from Debater A")
+    expect(answerBResult).toBe("Opening answer from Debater B")
+    expect(critiqueAStage?.status).toBe("completed")
+    expect(critiqueBStage?.status).toBe("completed")
+    expect(critiqueAStage?.result).toEqual({
+      sessionId: "session-3",
+      stageKey: "critique_a",
+      content: "Critique from Debater A",
+    })
+    expect(critiqueBStage?.result).toEqual({
+      sessionId: "session-4",
+      stageKey: "critique_b",
+      content: "Critique from Debater B",
+    })
+
+    expect(completion.state.stages.filter((stage) => stage.key.startsWith("answer_") || stage.key.startsWith("critique_"))).toEqual([
+      {
+        key: "answer_a",
+        status: "completed",
+        result: {
+          stageKey: "answer_a",
+          sessionId: "session-1",
+          content: "Opening answer from Debater A",
+        },
+      },
+      {
+        key: "answer_b",
+        status: "completed",
+        result: {
+          stageKey: "answer_b",
+          sessionId: "session-2",
+          content: "Opening answer from Debater B",
+        },
+      },
+      {
+        key: "critique_a",
+        status: "completed",
+        result: {
+          stageKey: "critique_a",
+          sessionId: "session-3",
+          content: "Critique from Debater A",
+        },
+      },
+      {
+        key: "critique_b",
+        status: "completed",
+        result: {
+          stageKey: "critique_b",
+          sessionId: "session-4",
+          content: "Critique from Debater B",
+        },
+      },
+    ])
+
     expect(critiqueAPrompt).toContain("You are now in the critique round.")
     expect(critiqueAPrompt).toContain("You are Debater A and you are critiquing Debater B.")
     expect(critiqueAPrompt).toContain(`Your opening answer:\n${answerAResult}`)
