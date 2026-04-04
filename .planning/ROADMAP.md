@@ -13,7 +13,7 @@ This roadmap takes Debate from an empty greenfield repo to a usable v1 debate en
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation And Debate Skeleton** - Set up the project, SDK integration, config, and fixed stage model
-- [ ] **Phase 2: Independent Answers And Critiques** - Implement the core symmetric debate flow before judging
+- [x] **Phase 2: Independent Answers And Critiques** - Implement the core symmetric debate flow before judging
 - [ ] **Phase 3: Transcript Persistence And Inspection** - Save each stage and make debates inspectable
 - [ ] **Phase 4: Final Revisions And Judge Selection** - Complete the workflow with revised answers and winner selection
 - [ ] **Phase 5: Reliability And v1 Polish** - Add retries, failure handling, tests, and output polish
@@ -49,7 +49,7 @@ Plans:
 Plans:
 - [x] 02-01: Implement initial answer stages for Debater A and Debater B
 - [x] 02-02: Implement cross-critique stage prompts and output handling
-- [ ] 02-03: Add tests around stage order and independence boundaries
+- [x] 02-03: Add tests around stage order and independence boundaries
 
 ### Phase 3: Transcript Persistence And Inspection
 **Goal**: Persist every debate stage and make the transcript inspectable after or during a run
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation And Debate Skeleton | 3/3 | Complete | 2026-04-04 |
-| 2. Independent Answers And Critiques | 2/3 | In Progress |  |
+| 2. Independent Answers And Critiques | 3/3 | Complete | 2026-04-04 |
 | 3. Transcript Persistence And Inspection | 0/3 | Not started | - |
 | 4. Final Revisions And Judge Selection | 0/3 | Not started | - |
 | 5. Reliability And v1 Polish | 0/3 | Not started | - |
