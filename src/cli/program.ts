@@ -1,5 +1,7 @@
 import { Command } from "commander"
 
+import { runAskCommand } from "./run-ask-command.js"
+
 export interface AskCommandInput {
   question: string
   debaterA?: string
@@ -12,23 +14,11 @@ export interface BuildProgramOptions {
 }
 
 async function defaultAskHandler(input: AskCommandInput) {
-  console.log(`Debate queued: ${input.question}`)
-
-  const overrides = [
-    ["Debater A", input.debaterA],
-    ["Debater B", input.debaterB],
-    ["Judge", input.judge],
-  ].filter(([, value]) => Boolean(value))
-
-  if (overrides.length > 0) {
-    console.log("Role overrides:")
-
-    for (const [label, value] of overrides) {
-      console.log(`- ${label}: ${value}`)
-    }
-  }
-
-  console.log("Debate skeleton not wired yet. Phase 1 will add runtime execution next.")
+  await runAskCommand(input.question, {
+    debaterA: input.debaterA,
+    debaterB: input.debaterB,
+    judge: input.judge,
+  })
 }
 
 export function buildProgram(options: BuildProgramOptions = {}) {
