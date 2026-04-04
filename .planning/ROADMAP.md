@@ -12,7 +12,7 @@ This roadmap takes Debate from an empty greenfield repo to a usable v1 debate en
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation And Debate Skeleton** - Set up the project, SDK integration, config, and fixed stage model
+- [x] **Phase 1: Foundation And Debate Skeleton** - Set up the project, SDK integration, config, and fixed stage model
 - [ ] **Phase 2: Independent Answers And Critiques** - Implement the core symmetric debate flow before judging
 - [ ] **Phase 3: Transcript Persistence And Inspection** - Save each stage and make debates inspectable
 - [ ] **Phase 4: Final Revisions And Judge Selection** - Complete the workflow with revised answers and winner selection
@@ -31,9 +31,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 3 plans
 
 Plans:
-- [ ] 01-01: Initialize the TypeScript project, runtime tooling, and CLI entrypoint
-- [ ] 01-02: Wire OpenCode SDK client creation and app configuration loading
-- [ ] 01-03: Define debate state, stage types, and the orchestration skeleton
+- [x] 01-01-PLAN.md — Initialize the TypeScript project, runtime tooling, and CLI entrypoint
+- [x] 01-02-PLAN.md — Wire OpenCode SDK client creation and app configuration loading
+- [x] 01-03-PLAN.md — Define debate state, stage types, and the orchestration skeleton
 
 ### Phase 2: Independent Answers And Critiques
 **Goal**: Implement the core debate behavior where both debaters answer independently and then critique each other without breaking symmetry
@@ -105,7 +105,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation And Debate Skeleton | 0/3 | Not started | - |
+| 1. Foundation And Debate Skeleton | 3/3 | Complete | 2026-04-04 |
 | 2. Independent Answers And Critiques | 0/3 | Not started | - |
 | 3. Transcript Persistence And Inspection | 0/3 | Not started | - |
 | 4. Final Revisions And Judge Selection | 0/3 | Not started | - |

@@ -7,9 +7,9 @@
 
 ### Debate Input
 
-- [ ] **INPUT-01**: User can submit a question to start a new debate run
-- [ ] **INPUT-02**: User can configure which model is used as Debater A, Debater B, and Judge
-- [ ] **INPUT-03**: User can run the debate through the OpenCode SDK using the local OpenCode server configuration
+- [x] **INPUT-01**: User can submit a question to start a new debate run
+- [x] **INPUT-02**: User can configure which model is used as Debater A, Debater B, and Judge
+- [x] **INPUT-03**: User can run the debate through the OpenCode SDK using the local OpenCode server configuration
 
 ### Debate Orchestration
 
@@ -19,7 +19,7 @@
 - [ ] **ORCH-04**: Debater B can critique Debater A's initial answer
 - [ ] **ORCH-05**: Debater A can generate a final revised answer after the critique round
 - [ ] **ORCH-06**: Debater B can generate a final revised answer after the critique round
-- [ ] **ORCH-07**: The debate executes in a fixed stage order that preserves the symmetric workflow
+- [x] **ORCH-07**: The debate executes in a fixed stage order that preserves the symmetric workflow
 
 ### Judge Decision
 
@@ -72,16 +72,16 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INPUT-01 | Phase 1 | Pending |
-| INPUT-02 | Phase 1 | Pending |
-| INPUT-03 | Phase 1 | Pending |
+| INPUT-01 | Phase 1 | Complete |
+| INPUT-02 | Phase 1 | Complete |
+| INPUT-03 | Phase 1 | Complete |
 | ORCH-01 | Phase 2 | Pending |
 | ORCH-02 | Phase 2 | Pending |
 | ORCH-03 | Phase 2 | Pending |
 | ORCH-04 | Phase 2 | Pending |
 | ORCH-05 | Phase 4 | Pending |
 | ORCH-06 | Phase 4 | Pending |
-| ORCH-07 | Phase 1 | Pending |
+| ORCH-07 | Phase 1 | Complete |
 | JUDGE-01 | Phase 4 | Pending |
 | JUDGE-02 | Phase 4 | Pending |
 | JUDGE-03 | Phase 4 | Pending |
