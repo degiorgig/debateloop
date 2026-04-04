@@ -26,4 +26,16 @@ describe("DEBATE_STAGES", () => {
       "Final decision",
     ])
   })
+
+  it("keeps the actor mapping aligned with the visible stage sequence", () => {
+    expect(DEBATE_STAGES.map((stage) => [stage.key, stage.actorRole])).toEqual([
+      ["answer_a", "debaterA"],
+      ["answer_b", "debaterB"],
+      ["critique_a", "debaterA"],
+      ["critique_b", "debaterB"],
+      ["revise_a", "debaterA"],
+      ["revise_b", "debaterB"],
+      ["final_decision", "judge"],
+    ])
+  })
 })

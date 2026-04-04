@@ -376,4 +376,70 @@ describe("runAskCommand", () => {
     expect(critiqueBPrompt).toContain(`Opponent opening answer:\n${answerAResult}`)
     expect(critiqueBPrompt).toContain("Critique the opposing debater's opening answer against your own answer instead of writing a generic follow-up or a revised final answer.")
   })
+
+  it("keeps the visible independence note and completed answer critique stages aligned", async () => {
+    const sessionClient = createMockSessionClient()
+    const log = vi.fn()
+    const close = vi.fn()
+    const saveConfig = vi.fn().mockImplementation(async (config) => config)
+    const resolveSpy = vi.spyOn(resolveRunConfigModule, "resolveRunConfig").mockResolvedValue({
+      activeRoles: {
+        debaterA: "openai/gpt-5",
+        debaterB: "anthropic/claude-sonnet-4-5",
+        judge: "google/gemini-2.5-pro",
+      },
+      availableModels: [],
+      savedConfig: {
+        roles: {
+          debaterA: "openai/gpt-5",
+          debaterB: "anthropic/claude-sonnet-4-5",
+          judge: "google/gemini-2.5-pro",
+        },
+        firstRunHintShown: true,
+      },
+      usedSetup: false,
+    })
+
+    const completion = await runAskCommand(
+      "Should tests come first?",
+      {},
+      {
+        startOpenCode: async () => ({
+          client: {
+            ...createMockClient(),
+            session: sessionClient,
+          } as never,
+          close,
+        }),
+        saveConfig,
+        log,
+      },
+    )
+
+    const lines = log.mock.calls.map(([message]) => message)
+
+    expect(lines).toContain(
+      "Independent opening answers: Debater A and Debater B each answer in isolation before the cross-critique exchange begins.",
+    )
+    expect(completion.state.status).toBe("completed")
+    expect(completion.state.stages.map((stage) => [stage.key, stage.status])).toEqual([
+      ["answer_a", "completed"],
+      ["answer_b", "completed"],
+      ["critique_a", "completed"],
+      ["critique_b", "completed"],
+      ["revise_a", "completed"],
+      ["revise_b", "completed"],
+      ["final_decision", "completed"],
+    ])
+    expect(completion.state.stages.find((stage) => stage.key === "answer_a")?.result?.content).toBe("Opening answer from Debater A")
+    expect(completion.state.stages.find((stage) => stage.key === "answer_b")?.result?.content).toBe("Opening answer from Debater B")
+    expect(completion.state.stages.find((stage) => stage.key === "critique_a")?.result?.content).toBe("Critique from Debater A")
+    expect(completion.state.stages.find((stage) => stage.key === "critique_b")?.result?.content).toBe("Critique from Debater B")
+    expect(completion.state.stages.find((stage) => stage.key === "revise_a")?.result).toBeUndefined()
+    expect(completion.state.stages.find((stage) => stage.key === "final_decision")?.result).toBeUndefined()
+    expect(saveConfig).not.toHaveBeenCalled()
+    expect(close).toHaveBeenCalledTimes(1)
+
+    resolveSpy.mockRestore()
+  })
 })
