@@ -377,6 +377,85 @@ describe("runAskCommand", () => {
     expect(critiqueBPrompt).toContain("Critique the opposing debater's opening answer against your own answer instead of writing a generic follow-up or a revised final answer.")
   })
 
+  it("fails fast on model execution errors before dependent stages start", async () => {
+    const sessionClient = {
+      create: vi
+        .fn()
+        .mockResolvedValueOnce({ data: { id: "session-1" } })
+        .mockResolvedValueOnce({ data: { id: "session-2" } }),
+      prompt: vi
+        .fn()
+        .mockResolvedValueOnce({
+          data: {
+            info: {
+              id: "message-1",
+              sessionID: "session-1",
+              role: "assistant",
+              time: { created: Date.now() },
+              parentID: "parent-1",
+              modelID: "gpt-5",
+              providerID: "openai",
+              mode: "build",
+              path: { cwd: "/tmp", root: "/tmp" },
+              cost: 0,
+              tokens: { input: 0, output: 0, reasoning: 0, cache: { read: 0, write: 0 } },
+            },
+            parts: [
+              {
+                id: "part-1",
+                sessionID: "session-1",
+                messageID: "message-1",
+                type: "text",
+                text: "Opening answer from Debater A",
+              },
+            ],
+          },
+        })
+        .mockResolvedValueOnce({
+          data: {
+            info: {
+              id: "message-2",
+              sessionID: "session-2",
+              role: "assistant",
+              time: { created: Date.now() },
+              parentID: "parent-2",
+              modelID: "claude-sonnet-4-5",
+              providerID: "anthropic",
+              mode: "build",
+              path: { cwd: "/tmp", root: "/tmp" },
+              cost: 0,
+              tokens: { input: 0, output: 0, reasoning: 0, cache: { read: 0, write: 0 } },
+              error: {
+                name: "APIError",
+                data: {
+                  message: "The requested model is not supported.",
+                  isRetryable: false,
+                },
+              },
+            },
+            parts: [],
+          },
+        }),
+    }
+
+    const onStageStart = vi.fn()
+
+    await expect(
+      runDebate({
+        question: "Should tests come first?",
+        roles: {
+          debaterA: "openai/gpt-5",
+          debaterB: "anthropic/claude-sonnet-4-5",
+          judge: "google/gemini-2.5-pro",
+        },
+        sessionClient: sessionClient as never,
+        onStageStart,
+      }),
+    ).rejects.toThrow("Failed to run answer_b with anthropic/claude-sonnet-4-5: The requested model is not supported.")
+
+    expect(onStageStart.mock.calls.map(([event]) => event.stage.key)).toEqual(["answer_a", "answer_b"])
+  })
+
   it("keeps the visible independence note and completed answer critique stages aligned", async () => {
     const sessionClient = createMockSessionClient()
     const log = vi.fn()

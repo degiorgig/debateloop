@@ -76,6 +76,18 @@ function getRequiredStageContent(state: DebateRunState, stageKey: DebateStageDef
   return content
 }
 
+function assertStagePrerequisites(state: DebateRunState, stage: DebateStageDefinition) {
+  if (stage.key === "critique_a") {
+    getRequiredStageContent(state, "answer_a")
+    getRequiredStageContent(state, "answer_b")
+  }
+
+  if (stage.key === "critique_b") {
+    getRequiredStageContent(state, "answer_b")
+    getRequiredStageContent(state, "answer_a")
+  }
+}
+
 function isDebaterRole(role: DebateStageDefinition["actorRole"]): role is DebaterRole {
   return role === "debaterA" || role === "debaterB"
 }
@@ -109,10 +121,22 @@ async function runModelStage(options: {
     throw new Error(`OpenCode did not return a response payload for ${options.stageKey}.`)
   }
 
+  if (response.data.info.error) {
+    const message = response.data.info.error.data.message ?? "Unknown model execution error."
+
+    throw new Error(`Failed to run ${options.stageKey} with ${options.modelId}: ${message}`)
+  }
+
+  const content = extractText(response.data.parts)
+
+  if (!content) {
+    throw new Error(`OpenCode returned no text content for ${options.stageKey} with ${options.modelId}.`)
+  }
+
   return {
     stageKey: options.stageKey,
     sessionId,
-    content: extractText(response.data.parts),
+    content,
   }
 }
 
@@ -192,6 +216,8 @@ export async function runDebate(options: {
   }
 
   for (const stage of DEBATE_STAGES) {
+    assertStagePrerequisites(state, stage)
+
     state.currentStage = stage.key
     updateStageStatus(state, stage.key, "running")
 
