@@ -1,8 +1,25 @@
 {
   "name": "debateloop",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "Structured CLI debate loops powered by OpenCode",
+  "keywords": [
+    "cli",
+    "debate",
+    "llm",
+    "opencode",
+    "ai"
+  ],
+  "homepage": "https://github.com/degiorgig/debateloop#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/degiorgig/debateloop.git"
+  },
+  "bugs": {
+    "url": "https://github.com/degiorgig/debateloop/issues"
+  },
+  "license": "MIT",
+  "author": "Giovanni Degiorgi",
   "type": "module",
   "engines": {
     "node": ">=20.12.0"
@@ -10,6 +27,11 @@
   "bin": {
     "debateloop": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "dev": "tsx src/index.ts",
     "build": "tsc -p tsconfig.json",
