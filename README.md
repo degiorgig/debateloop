@@ -44,13 +44,13 @@ npm link
 Start a debate:
 
 ```bash
-debateloop ask "Perche' TypeScript e' meglio di JavaScript?"
+debateloop ask "Why is TypeScript better than JavaScript?"
 ```
 
 Override the models for one run:
 
 ```bash
-debateloop ask "Meglio microservizi o monolite?" \
+debateloop ask "Which is better: microservices or a monolith?" \
   --debater-a github-copilot/claude-sonnet-4.6 \
   --debater-b github-copilot/gpt-5.4 \
   --judge github-copilot/claude-haiku-4.5
@@ -59,7 +59,7 @@ debateloop ask "Meglio microservizi o monolite?" \
 Show every model output as each stage completes:
 
 ```bash
-debateloop ask "Quando il clean code peggiora una codebase?" --debug
+debateloop ask "When does clean code make a codebase worse?" --debug
 ```
 
 Inspect a saved transcript:
