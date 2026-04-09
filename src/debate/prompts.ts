@@ -66,3 +66,41 @@ export function buildCritiquePrompt(options: {
     `Opponent opening answer:\n${options.opponentAnswer}`,
   ].join("\n\n")
 }
+
+export function buildRevisionPrompt(options: {
+  question: string
+  actorRole: Extract<DebateRole, "debaterA" | "debaterB">
+  actorAnswer: string
+  opponentCritique: string
+}) {
+  return [
+    getRoleBrief(options.actorRole),
+    "You are now in the final revision round.",
+    "Rewrite your opening answer as a balanced revision, not a tiny patch and not a full from-scratch replacement.",
+    "Your main job is to address the opponent's critique directly while keeping the answer readable, self-contained, and improved.",
+    "Acknowledge strong critique where it improves your answer, but preserve your distinct voice and structure instead of converging into a near-duplicate.",
+    `Question: ${options.question}`,
+    `Your opening answer:\n${options.actorAnswer}`,
+    `Opponent critique of your answer:\n${options.opponentCritique}`,
+  ].join("\n\n")
+}
+
+export function buildJudgePrompt(options: {
+  question: string
+  revisedAnswerA: string
+  revisedAnswerB: string
+}) {
+  return [
+    "You are the judge in a structured two-model debate.",
+    "Compare the two final revised answers and select exactly one winner.",
+    "Prioritize usefulness and correctness above all other factors.",
+    "Treat clarity and readability as major decision factors.",
+    "Penalize an answer strongly if it ignores an important critique from the earlier round.",
+    "Stay balanced between safer and more decisive answers instead of favoring one style by default.",
+    "Return ONLY valid JSON with this exact shape:",
+    '{"winner":"debaterA"|"debaterB","rationale":"short explanation"}',
+    `Question: ${options.question}`,
+    `Debater A revised answer:\n${options.revisedAnswerA}`,
+    `Debater B revised answer:\n${options.revisedAnswerB}`,
+  ].join("\n\n")
+}

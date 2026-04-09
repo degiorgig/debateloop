@@ -17,21 +17,21 @@
 - [x] **ORCH-02**: Debater B can generate an independent initial answer to the same question before seeing Debater A's answer
 - [x] **ORCH-03**: Debater A can critique Debater B's initial answer
 - [x] **ORCH-04**: Debater B can critique Debater A's initial answer
-- [ ] **ORCH-05**: Debater A can generate a final revised answer after the critique round
-- [ ] **ORCH-06**: Debater B can generate a final revised answer after the critique round
+- [x] **ORCH-05**: Debater A can generate a final revised answer after the critique round
+- [x] **ORCH-06**: Debater B can generate a final revised answer after the critique round
 - [x] **ORCH-07**: The debate executes in a fixed stage order that preserves the symmetric workflow
 
 ### Judge Decision
 
-- [ ] **JUDGE-01**: Judge can compare the two final revised answers and select a winner
-- [ ] **JUDGE-02**: Judge returns a rationale explaining why the winning answer was selected
-- [ ] **JUDGE-03**: Judge output is validated in a structured format before the app returns the final result
+- [x] **JUDGE-01**: Judge can compare the two final revised answers and select a winner
+- [x] **JUDGE-02**: Judge returns a rationale explaining why the winning answer was selected
+- [x] **JUDGE-03**: Judge output is validated in a structured format before the app returns the final result
 
 ### Transcript And Inspection
 
-- [ ] **TRNS-01**: System persists each debate stage with role, prompt context, and output content
-- [ ] **TRNS-02**: User can inspect the full debate transcript after a run completes
-- [ ] **TRNS-03**: Final result clearly identifies the winning model and includes the winning final answer
+- [x] **TRNS-01**: System persists each debate stage with role, prompt context, and output content
+- [x] **TRNS-02**: User can inspect the full debate transcript after a run completes
+- [x] **TRNS-03**: Final result clearly identifies the winning model and includes the winning final answer
 
 ### Reliability
 
@@ -79,15 +79,15 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ORCH-02 | Phase 2 | Complete |
 | ORCH-03 | Phase 2 | Complete |
 | ORCH-04 | Phase 2 | Complete |
-| ORCH-05 | Phase 4 | Pending |
-| ORCH-06 | Phase 4 | Pending |
+| ORCH-05 | Phase 4 | Complete |
+| ORCH-06 | Phase 4 | Complete |
 | ORCH-07 | Phase 1 | Complete |
-| JUDGE-01 | Phase 4 | Pending |
-| JUDGE-02 | Phase 4 | Pending |
-| JUDGE-03 | Phase 4 | Pending |
-| TRNS-01 | Phase 3 | Pending |
-| TRNS-02 | Phase 3 | Pending |
-| TRNS-03 | Phase 4 | Pending |
+| JUDGE-01 | Phase 4 | Complete |
+| JUDGE-02 | Phase 4 | Complete |
+| JUDGE-03 | Phase 4 | Complete |
+| TRNS-01 | Phase 3 | Complete |
+| TRNS-02 | Phase 3 | Complete |
+| TRNS-03 | Phase 4 | Complete |
 | RELY-01 | Phase 5 | Pending |
 | RELY-02 | Phase 5 | Pending |
 | RELY-03 | Phase 5 | Pending |
@@ -99,4 +99,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-04-04*
-*Last updated: 2026-04-04 after initial definition*
+*Last updated: 2026-04-05 after Phase 4 completion*

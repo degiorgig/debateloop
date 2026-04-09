@@ -1,16 +1,19 @@
 import { Command } from "commander"
 
 import { runAskCommand } from "./run-ask-command.js"
+import { runInspectCommand } from "./run-inspect-command.js"
 
 export interface AskCommandInput {
   question: string
   debaterA?: string
   debaterB?: string
   judge?: string
+  debug: boolean
 }
 
 export interface BuildProgramOptions {
   onAsk?: (input: AskCommandInput) => Promise<void> | void
+  onInspect?: (runId: string) => Promise<void> | void
 }
 
 async function defaultAskHandler(input: AskCommandInput) {
@@ -18,33 +21,46 @@ async function defaultAskHandler(input: AskCommandInput) {
     debaterA: input.debaterA,
     debaterB: input.debaterB,
     judge: input.judge,
+  }, {
+    debug: input.debug,
   })
 }
 
 export function buildProgram(options: BuildProgramOptions = {}) {
   const askHandler = options.onAsk ?? defaultAskHandler
+  const inspectHandler = options.onInspect ?? runInspectCommand
 
   const program = new Command()
 
   program
-    .name("debate")
-    .description("Debate is a terminal utility for running structured model-vs-model answers.")
+    .name("debateloop")
+    .description("Debateloop is a terminal utility for running structured model-vs-model answers.")
     .showHelpAfterError()
 
   program
     .command("ask")
-    .description("Start a debate for one quoted question.")
+    .description("Start a debate loop for one quoted question.")
     .argument("<question>", "question to debate")
     .option("--debater-a <model>", "override the Debater A model for this run")
     .option("--debater-b <model>", "override the Debater B model for this run")
     .option("--judge <model>", "override the Judge model for this run")
-    .action(async (question: string, commandOptions: Record<string, string | undefined>) => {
+    .option("--debug", "print every model output as each debate stage completes")
+    .action(async (question: string, commandOptions: Record<string, string | boolean | undefined>) => {
       await askHandler({
         question,
-        debaterA: commandOptions.debaterA,
-        debaterB: commandOptions.debaterB,
-        judge: commandOptions.judge,
+        debaterA: typeof commandOptions.debaterA === "string" ? commandOptions.debaterA : undefined,
+        debaterB: typeof commandOptions.debaterB === "string" ? commandOptions.debaterB : undefined,
+        judge: typeof commandOptions.judge === "string" ? commandOptions.judge : undefined,
+        debug: commandOptions.debug === true,
       })
+    })
+
+  program
+    .command("inspect")
+    .description("Inspect a saved transcript by run id.")
+    .argument("<runId>", "saved debateloop run id")
+    .action(async (runId: string) => {
+      await inspectHandler(runId)
     })
 
   return program

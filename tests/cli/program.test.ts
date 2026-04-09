@@ -9,7 +9,7 @@ describe("buildProgram", () => {
 
     await program.parseAsync([
       "node",
-      "debate",
+      "debateloop",
       "ask",
       "Should tests come first?",
       "--debater-a",
@@ -18,6 +18,7 @@ describe("buildProgram", () => {
       "openai/gpt-5",
       "--judge",
       "google/gemini-2.5-pro",
+      "--debug",
     ])
 
     expect(onAsk).toHaveBeenCalledWith({
@@ -25,7 +26,17 @@ describe("buildProgram", () => {
       debaterA: "anthropic/claude-sonnet-4-5",
       debaterB: "openai/gpt-5",
       judge: "google/gemini-2.5-pro",
+      debug: true,
     })
+  })
+
+  it("parses transcript inspection by run id", async () => {
+    const onInspect = vi.fn()
+    const program = buildProgram({ onInspect })
+
+    await program.parseAsync(["node", "debateloop", "inspect", "run-42"])
+
+    expect(onInspect).toHaveBeenCalledWith("run-42")
   })
 
   it("shows Debate help with readable command names and flags", () => {
@@ -33,11 +44,13 @@ describe("buildProgram", () => {
     const help = program.helpInformation()
     const askHelp = program.commands.find((command) => command.name() === "ask")?.helpInformation()
 
-    expect(help).toContain("Debate is a terminal utility")
+    expect(help).toContain("Debateloop is a terminal utility")
     expect(help).toContain("ask")
+    expect(help).toContain("inspect")
     expect(askHelp).toContain("--debater-a <model>")
     expect(askHelp).toContain("--debater-b <model>")
     expect(askHelp).toContain("--judge <model>")
+    expect(askHelp).toContain("--debug")
   })
 
   it("describes the ask command as a direct quoted-question flow", () => {

@@ -15,13 +15,27 @@ const DebateRolesSchema = z
     path: ["debaterB"],
   })
 
+const DEFAULT_RELIABILITY = {
+  maxStageAttempts: 3,
+  stageTimeoutMs: 30_000,
+  retryBackoffMs: 750,
+} as const
+
+const DebateReliabilitySchema = z.object({
+  maxStageAttempts: z.number().int().min(1).max(5).default(DEFAULT_RELIABILITY.maxStageAttempts),
+  stageTimeoutMs: z.number().int().min(1_000).max(120_000).default(DEFAULT_RELIABILITY.stageTimeoutMs),
+  retryBackoffMs: z.number().int().min(0).max(10_000).default(DEFAULT_RELIABILITY.retryBackoffMs),
+})
+
 export const DebateConfigSchema = z.object({
   roles: DebateRolesSchema,
   firstRunHintShown: z.boolean().default(false),
+  reliability: DebateReliabilitySchema.default(DEFAULT_RELIABILITY),
 })
 
 export type DebateConfig = z.infer<typeof DebateConfigSchema>
 export type DebateRoleConfig = DebateConfig["roles"]
+export type DebateReliabilityConfig = DebateConfig["reliability"]
 
 export class DebateConfigError extends Error {
   constructor(message: string) {

@@ -1,15 +1,27 @@
 import type { DebateConfig } from "../app/config.js"
 import { saveDebateConfig } from "../app/config.js"
-import { runDebate } from "../debate/run-debate.js"
-import { renderCompletion, renderIndependenceNote, renderRoleSummary, renderStagePlan, renderStageProgress } from "./render.js"
+import { DebateStageExecutionError, runDebate } from "../debate/run-debate.js"
+import {
+  renderCompletion,
+  renderFailure,
+  renderIndependenceNote,
+  renderRoleSummary,
+  renderStageDebugOutput,
+  renderStagePlan,
+  renderStageProgress,
+  renderStageRetry,
+} from "./render.js"
 import { resolveRunConfig, type RunConfigOverrides } from "./resolve-run-config.js"
 import { startOpenCode, type StartedOpenCode } from "../opencode/client.js"
 
 export interface AskCommandRuntime {
   startOpenCode?: () => Promise<StartedOpenCode>
   log?: (message: string) => void
+  debug?: boolean
   saveConfig?: (config: DebateConfig, configPath?: string) => Promise<DebateConfig>
   configPath?: string
+  createRunId?: () => string
+  transcriptPath?: string
 }
 
 export async function runAskCommand(
@@ -38,8 +50,35 @@ export async function runAskCommand(
       question,
       roles: resolved.activeRoles,
       sessionClient: openCode.client.session,
+      createRunId: runtime.createRunId,
+      transcriptPath: runtime.transcriptPath,
+      reliability: resolved.savedConfig.reliability,
       onStageStart: ({ stage, actorModel }) => {
         log(renderStageProgress(stage, actorModel))
+      },
+      onStageRetry: ({ stage, actorModel, nextAttempt, maxAttempts, reason }) => {
+        log(
+          renderStageRetry({
+            stage,
+            actorModel,
+            nextAttempt,
+            maxAttempts,
+            reason,
+          }),
+        )
+      },
+      onStageComplete: ({ stage, actorModel, result }) => {
+        if (!runtime.debug) {
+          return
+        }
+
+        log(
+          renderStageDebugOutput({
+            stage,
+            actorModel,
+            result,
+          }),
+        )
       },
     })
 
@@ -55,11 +94,35 @@ export async function runAskCommand(
     log(
       renderCompletion({
         config: resolved.savedConfig,
+        decision: completion.decision,
         usedSetup: resolved.usedSetup,
+        transcriptAvailable: completion.transcriptAvailable,
+        transcriptId: completion.transcriptId,
+        transcriptPath: completion.transcriptPath,
       }),
     )
 
     return completion
+  } catch (error) {
+    if (error instanceof DebateStageExecutionError) {
+      throw new Error(
+        renderFailure({
+          error: error.message,
+          stage: error.stageLabel && error.actorModel
+            ? {
+                label: error.stageLabel,
+                actorModel: error.actorModel,
+              }
+            : undefined,
+          transcriptAvailable: true,
+          transcriptId: error.transcriptId,
+          transcriptPath: error.transcriptPath,
+        }),
+        { cause: error },
+      )
+    }
+
+    throw error
   } finally {
     openCode.close()
   }

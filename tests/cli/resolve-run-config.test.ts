@@ -92,7 +92,7 @@ function createMockClient() {
 }
 
 async function createTempConfigPath() {
-  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "debate-run-config-"))
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "debateloop-run-config-"))
   tempDirs.push(directory)
   return path.join(directory, "config.json")
 }
@@ -128,6 +128,11 @@ describe("resolveRunConfig", () => {
 
     const saved = JSON.parse(await fs.readFile(configPath, "utf8"))
     expect(saved.roles.debaterA).toBe("openai/gpt-5")
+    expect(saved.reliability).toEqual({
+      maxStageAttempts: 3,
+      stageTimeoutMs: 30000,
+      retryBackoffMs: 750,
+    })
   })
 
   it("applies non-persistent per-run overrides", async () => {
@@ -143,6 +148,11 @@ describe("resolveRunConfig", () => {
           judge: "google/gemini-2.5-pro",
         },
         firstRunHintShown: true,
+        reliability: {
+          maxStageAttempts: 2,
+          stageTimeoutMs: 10000,
+          retryBackoffMs: 100,
+        },
       }),
       "utf8",
     )
@@ -160,6 +170,7 @@ describe("resolveRunConfig", () => {
 
     const saved = JSON.parse(await fs.readFile(configPath, "utf8"))
     expect(saved.roles.judge).toBe("google/gemini-2.5-pro")
+    expect(saved.reliability.maxStageAttempts).toBe(2)
   })
 
   it("repairs stale saved config when a model is unavailable", async () => {
@@ -182,6 +193,11 @@ describe("resolveRunConfig", () => {
           judge: "google/gemini-2.5-pro",
         },
         firstRunHintShown: true,
+        reliability: {
+          maxStageAttempts: 4,
+          stageTimeoutMs: 25000,
+          retryBackoffMs: 500,
+        },
       }),
       "utf8",
     )
@@ -195,5 +211,10 @@ describe("resolveRunConfig", () => {
     expect(result.usedSetup).toBe(true)
     expect(prompts.selectRoleModel).toHaveBeenCalledTimes(3)
     expect(result.savedConfig.roles.debaterA).toBe("anthropic/claude-sonnet-4-5")
+    expect(result.savedConfig.reliability).toEqual({
+      maxStageAttempts: 3,
+      stageTimeoutMs: 30000,
+      retryBackoffMs: 750,
+    })
   })
 })

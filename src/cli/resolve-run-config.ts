@@ -56,10 +56,10 @@ async function repairConfig(
 ) {
   const repairedRoles = await promptForRoleConfig(availableModels, prompts)
   return saveDebateConfig(
-    {
+    parseDebateConfig({
       roles: repairedRoles,
       firstRunHintShown: false,
-    },
+    }),
     configPath,
   )
 }

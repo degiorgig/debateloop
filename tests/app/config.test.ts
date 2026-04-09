@@ -14,7 +14,7 @@ import {
 const tempDirs: string[] = []
 
 async function createTempConfigPath() {
-  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "debate-config-"))
+  const directory = await fs.mkdtemp(path.join(os.tmpdir(), "debateloop-config-"))
   tempDirs.push(directory)
   return path.join(directory, "config.json")
 }
@@ -47,6 +47,11 @@ describe("DebateConfigSchema", () => {
           judge: "google/gemini-2.5-pro",
         },
         firstRunHintShown: true,
+        reliability: {
+          maxStageAttempts: 3,
+          stageTimeoutMs: 30000,
+          retryBackoffMs: 750,
+        },
       },
       configPath,
     )
@@ -58,6 +63,27 @@ describe("DebateConfigSchema", () => {
         judge: "google/gemini-2.5-pro",
       },
       firstRunHintShown: true,
+      reliability: {
+        maxStageAttempts: 3,
+        stageTimeoutMs: 30000,
+        retryBackoffMs: 750,
+      },
+    })
+  })
+
+  it("fills in default reliability settings during parsing", () => {
+    expect(
+      parseDebateConfig({
+        roles: {
+          debaterA: "openai/gpt-5",
+          debaterB: "anthropic/claude-sonnet-4-5",
+          judge: "google/gemini-2.5-pro",
+        },
+      }).reliability,
+    ).toEqual({
+      maxStageAttempts: 3,
+      stageTimeoutMs: 30000,
+      retryBackoffMs: 750,
     })
   })
 
