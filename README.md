@@ -98,6 +98,28 @@ Saved transcripts live under:
 
 The saved config also contains reliability settings, including the default stage timeout. A CLI override such as `--stage-timeout-ms 90000` applies only to the current run and does not rewrite your saved config.
 
+If you already had an older config file, it keeps your previously saved timeout instead of silently switching to a new default. To make the saved timeout permanent, edit:
+
+```text
+~/.config/debateloop/config.json
+```
+
+and update:
+
+```json
+{
+  "reliability": {
+    "stageTimeoutMs": 60000
+  }
+}
+```
+
+If you want to reset the local configuration completely and re-run guided setup on the next command:
+
+```bash
+rm ~/.config/debateloop/config.json
+```
+
 ## How It Behaves
 
 - opening answers are generated independently before critique begins
