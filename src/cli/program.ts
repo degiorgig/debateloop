@@ -8,6 +8,7 @@ export interface AskCommandInput {
   debaterA?: string
   debaterB?: string
   judge?: string
+  stageTimeoutMs?: number
   debug: boolean
 }
 
@@ -21,6 +22,7 @@ async function defaultAskHandler(input: AskCommandInput) {
     debaterA: input.debaterA,
     debaterB: input.debaterB,
     judge: input.judge,
+    stageTimeoutMs: input.stageTimeoutMs,
   }, {
     debug: input.debug,
   })
@@ -44,6 +46,7 @@ export function buildProgram(options: BuildProgramOptions = {}) {
     .option("--debater-a <model>", "override the Debater A model for this run")
     .option("--debater-b <model>", "override the Debater B model for this run")
     .option("--judge <model>", "override the Judge model for this run")
+    .option("--stage-timeout-ms <ms>", "override the per-stage timeout for this run", parsePositiveInt)
     .option("--debug", "print every model output as each debate stage completes")
     .action(async (question: string, commandOptions: Record<string, string | boolean | undefined>) => {
       await askHandler({
@@ -51,6 +54,7 @@ export function buildProgram(options: BuildProgramOptions = {}) {
         debaterA: typeof commandOptions.debaterA === "string" ? commandOptions.debaterA : undefined,
         debaterB: typeof commandOptions.debaterB === "string" ? commandOptions.debaterB : undefined,
         judge: typeof commandOptions.judge === "string" ? commandOptions.judge : undefined,
+        stageTimeoutMs: typeof commandOptions.stageTimeoutMs === "number" ? commandOptions.stageTimeoutMs : undefined,
         debug: commandOptions.debug === true,
       })
     })
@@ -64,4 +68,14 @@ export function buildProgram(options: BuildProgramOptions = {}) {
     })
 
   return program
+}
+
+function parsePositiveInt(value: string) {
+  const parsed = Number.parseInt(value, 10)
+
+  if (!Number.isInteger(parsed) || parsed <= 0) {
+    throw new Error(`Expected a positive integer, received: ${value}`)
+  }
+
+  return parsed
 }

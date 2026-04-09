@@ -6,6 +6,7 @@ import {
   parseDebateConfig,
   saveDebateConfig,
 } from "../app/config.js"
+import { z } from "zod"
 import { promptForRoleConfig, type SetupPrompts } from "./setup.js"
 import {
   assertModelAvailable,
@@ -19,10 +20,12 @@ export interface RunConfigOverrides {
   debaterA?: string
   debaterB?: string
   judge?: string
+  stageTimeoutMs?: number
 }
 
 export interface ResolvedRunConfig {
   activeRoles: DebateRoleConfig
+  activeReliability: DebateConfig["reliability"]
   availableModels: AvailableModel[]
   savedConfig: DebateConfig
   usedSetup: boolean
@@ -41,6 +44,19 @@ function applyOverrides(baseRoles: DebateRoleConfig, overrides: RunConfigOverrid
     debaterB: overrides.debaterB ?? baseRoles.debaterB,
     judge: overrides.judge ?? baseRoles.judge,
   }
+}
+
+const ReliabilityOverrideSchema = z.object({
+  maxStageAttempts: z.number().int().min(1).max(5),
+  stageTimeoutMs: z.number().int().min(1_000).max(120_000),
+  retryBackoffMs: z.number().int().min(0).max(10_000),
+})
+
+function applyReliabilityOverrides(baseReliability: DebateConfig["reliability"], overrides: RunConfigOverrides) {
+  return ReliabilityOverrideSchema.parse({
+    ...baseReliability,
+    stageTimeoutMs: overrides.stageTimeoutMs ?? baseReliability.stageTimeoutMs,
+  })
 }
 
 function validateRolesAgainstAvailableModels(roles: DebateRoleConfig, availableModels: AvailableModel[]) {
@@ -94,11 +110,13 @@ export async function resolveRunConfig(options: ResolveRunConfigOptions): Promis
     ...savedConfig,
     roles: applyOverrides(savedConfig.roles, options.overrides ?? {}),
   }).roles
+  const activeReliability = applyReliabilityOverrides(savedConfig.reliability, options.overrides ?? {})
 
   validateRolesAgainstAvailableModels(activeRoles, availableModels)
 
   return {
     activeRoles,
+    activeReliability,
     availableModels,
     savedConfig,
     usedSetup,

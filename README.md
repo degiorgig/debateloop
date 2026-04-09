@@ -2,6 +2,8 @@
 
 `debateloop` is a terminal CLI for running structured model-vs-model debates on top of your local OpenCode setup.
 
+By default, each stage uses a `60000ms` timeout.
+
 It runs a fixed debate loop:
 
 1. Debater A opening answer
@@ -62,6 +64,12 @@ Show every model output as each stage completes:
 debateloop ask "When does clean code make a codebase worse?" --debug
 ```
 
+Override the stage timeout for one run:
+
+```bash
+debateloop ask "Should we rewrite this service?" --stage-timeout-ms 90000
+```
+
 Inspect a saved transcript:
 
 ```bash
@@ -87,6 +95,8 @@ Saved transcripts live under:
 ```text
 ~/.config/debateloop/runs/
 ```
+
+The saved config also contains reliability settings, including the default stage timeout. A CLI override such as `--stage-timeout-ms 90000` applies only to the current run and does not rewrite your saved config.
 
 ## How It Behaves
 

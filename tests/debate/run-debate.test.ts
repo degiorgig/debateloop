@@ -167,6 +167,11 @@ describe("runAskCommand", () => {
         debaterB: "anthropic/claude-sonnet-4-5",
         judge: "google/gemini-2.5-pro",
       },
+      activeReliability: {
+        maxStageAttempts: 3,
+        stageTimeoutMs: 60000,
+        retryBackoffMs: 0,
+      },
       availableModels: [],
       savedConfig: {
         roles: {
@@ -177,7 +182,7 @@ describe("runAskCommand", () => {
         firstRunHintShown: false,
         reliability: {
           maxStageAttempts: 3,
-          stageTimeoutMs: 30000,
+          stageTimeoutMs: 60000,
           retryBackoffMs: 0,
         },
       },
@@ -259,6 +264,11 @@ describe("runAskCommand", () => {
         debaterB: "anthropic/claude-sonnet-4-5",
         judge: "google/gemini-2.5-pro",
       },
+      activeReliability: {
+        maxStageAttempts: 3,
+        stageTimeoutMs: 60000,
+        retryBackoffMs: 0,
+      },
       availableModels: [],
       savedConfig: {
         roles: {
@@ -269,7 +279,7 @@ describe("runAskCommand", () => {
         firstRunHintShown: true,
         reliability: {
           maxStageAttempts: 3,
-          stageTimeoutMs: 30000,
+          stageTimeoutMs: 60000,
           retryBackoffMs: 0,
         },
       },
@@ -302,6 +312,11 @@ describe("runAskCommand", () => {
         debaterB: "anthropic/claude-sonnet-4-5",
         judge: "google/gemini-2.5-pro",
       },
+      activeReliability: {
+        maxStageAttempts: 3,
+        stageTimeoutMs: 60000,
+        retryBackoffMs: 0,
+      },
       availableModels: [],
       savedConfig: {
         roles: {
@@ -312,7 +327,7 @@ describe("runAskCommand", () => {
         firstRunHintShown: true,
         reliability: {
           maxStageAttempts: 3,
-          stageTimeoutMs: 30000,
+          stageTimeoutMs: 60000,
           retryBackoffMs: 0,
         },
       },
@@ -803,7 +818,7 @@ describe("runAskCommand", () => {
       transcriptPath,
       reliability: {
         maxStageAttempts: 3,
-        stageTimeoutMs: 30000,
+        stageTimeoutMs: 60000,
         retryBackoffMs: 0,
       },
       onStageRetry,
@@ -1007,6 +1022,11 @@ describe("runAskCommand", () => {
         debaterB: "anthropic/claude-sonnet-4-5",
         judge: "google/gemini-2.5-pro",
       },
+      activeReliability: {
+        maxStageAttempts: 3,
+        stageTimeoutMs: 60000,
+        retryBackoffMs: 0,
+      },
       availableModels: [],
       savedConfig: {
         roles: {
@@ -1017,7 +1037,7 @@ describe("runAskCommand", () => {
         firstRunHintShown: true,
         reliability: {
           maxStageAttempts: 3,
-          stageTimeoutMs: 30000,
+          stageTimeoutMs: 60000,
           retryBackoffMs: 0,
         },
       },
@@ -1089,6 +1109,11 @@ describe("runAskCommand", () => {
         debaterB: "anthropic/claude-sonnet-4-5",
         judge: "google/gemini-2.5-pro",
       },
+      activeReliability: {
+        maxStageAttempts: 2,
+        stageTimeoutMs: 60000,
+        retryBackoffMs: 0,
+      },
       availableModels: [],
       savedConfig: {
         roles: {
@@ -1099,7 +1124,7 @@ describe("runAskCommand", () => {
         firstRunHintShown: true,
         reliability: {
           maxStageAttempts: 2,
-          stageTimeoutMs: 30000,
+          stageTimeoutMs: 60000,
           retryBackoffMs: 0,
         },
       },

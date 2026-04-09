@@ -52,7 +52,7 @@ export async function runAskCommand(
       sessionClient: openCode.client.session,
       createRunId: runtime.createRunId,
       transcriptPath: runtime.transcriptPath,
-      reliability: resolved.savedConfig.reliability,
+      reliability: resolved.activeReliability,
       onStageStart: ({ stage, actorModel }) => {
         log(renderStageProgress(stage, actorModel))
       },

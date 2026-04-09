@@ -125,12 +125,17 @@ describe("resolveRunConfig", () => {
       debaterB: "anthropic/claude-sonnet-4-5",
       judge: "google/gemini-2.5-pro",
     })
+    expect(result.activeReliability).toEqual({
+      maxStageAttempts: 3,
+      stageTimeoutMs: 60000,
+      retryBackoffMs: 750,
+    })
 
     const saved = JSON.parse(await fs.readFile(configPath, "utf8"))
     expect(saved.roles.debaterA).toBe("openai/gpt-5")
     expect(saved.reliability).toEqual({
       maxStageAttempts: 3,
-      stageTimeoutMs: 30000,
+      stageTimeoutMs: 60000,
       retryBackoffMs: 750,
     })
   })
@@ -162,11 +167,17 @@ describe("resolveRunConfig", () => {
       configPath,
       overrides: {
         judge: "anthropic/claude-sonnet-4-5",
+        stageTimeoutMs: 45000,
       },
     })
 
     expect(result.usedSetup).toBe(false)
     expect(result.activeRoles.judge).toBe("anthropic/claude-sonnet-4-5")
+    expect(result.activeReliability).toEqual({
+      maxStageAttempts: 2,
+      stageTimeoutMs: 45000,
+      retryBackoffMs: 100,
+    })
 
     const saved = JSON.parse(await fs.readFile(configPath, "utf8"))
     expect(saved.roles.judge).toBe("google/gemini-2.5-pro")
@@ -211,9 +222,14 @@ describe("resolveRunConfig", () => {
     expect(result.usedSetup).toBe(true)
     expect(prompts.selectRoleModel).toHaveBeenCalledTimes(3)
     expect(result.savedConfig.roles.debaterA).toBe("anthropic/claude-sonnet-4-5")
+    expect(result.activeReliability).toEqual({
+      maxStageAttempts: 3,
+      stageTimeoutMs: 60000,
+      retryBackoffMs: 750,
+    })
     expect(result.savedConfig.reliability).toEqual({
       maxStageAttempts: 3,
-      stageTimeoutMs: 30000,
+      stageTimeoutMs: 60000,
       retryBackoffMs: 750,
     })
   })

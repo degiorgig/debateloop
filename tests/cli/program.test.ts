@@ -18,6 +18,8 @@ describe("buildProgram", () => {
       "openai/gpt-5",
       "--judge",
       "google/gemini-2.5-pro",
+      "--stage-timeout-ms",
+      "45000",
       "--debug",
     ])
 
@@ -26,6 +28,7 @@ describe("buildProgram", () => {
       debaterA: "anthropic/claude-sonnet-4-5",
       debaterB: "openai/gpt-5",
       judge: "google/gemini-2.5-pro",
+      stageTimeoutMs: 45000,
       debug: true,
     })
   })
@@ -50,6 +53,7 @@ describe("buildProgram", () => {
     expect(askHelp).toContain("--debater-a <model>")
     expect(askHelp).toContain("--debater-b <model>")
     expect(askHelp).toContain("--judge <model>")
+    expect(askHelp).toContain("--stage-timeout-ms <ms>")
     expect(askHelp).toContain("--debug")
   })
 

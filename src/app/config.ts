@@ -17,7 +17,7 @@ const DebateRolesSchema = z
 
 const DEFAULT_RELIABILITY = {
   maxStageAttempts: 3,
-  stageTimeoutMs: 30_000,
+  stageTimeoutMs: 60_000,
   retryBackoffMs: 750,
 } as const
 
